@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+  <body>
+    <div style="text-align:center;">
+      <canvas id="canvas" height=1000 width=1000 style="border:gray solid 1px;margin-top:50px;"/>
+    </div>
+  </body>
+
+  <script>
+  	const canvas = document.getElementById('canvas');
+	var ctx = canvas.getContext("2d");
+
+	const clear = () => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	};
+
+
+	const drawСircle = (centerX, centerY, radius, color='red') => {
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius, 0, 2*Math.PI, false);
+		ctx.fillStyle = color;
+		ctx.fill();
+	};
+      
+function randCircle(){  
+    let  radius = Math.round(25 * Math.random() + 5);
+    let  x = Math.round((970-radius) * Math.random() + 30);
+    let  y = Math.round((970-radius) * Math.random() + 30);
+    let color = ['red','green','blue','pink','yellow','dimgray','darkorange','lime','crimson'];
+    let b=Math.round(9 * Math.random());
+    a = {  radius: radius,
+        x: x,
+        y: y,
+        color: color[b]};
+    return a; 
+}
+      
+function check(array,obj){
+    let s=true;
+    for(let i in array){ 
+        if((array[i].x-obj.x)**2+(array[i].y-obj.y)**2<=(array[i].radius+obj.radius)**2)
+            {
+            s=false;
+            break;
+            }
+    }
+return s;
+}
+function check2(array,obj,j){
+    let s=[true];
+    for(let i in array){
+        if(j==i) continue;
+        let x1=array[i].x + array[i].speed.x - obj.x - obj.speed.x;
+        let y1=array[i].y + array[i].speed.y - obj.y - obj.speed.y;
+        if((x1)**2+(y1)**2<=(array[i].radius + obj.radius)**2)
+            {
+            s[0]=false;    
+            s.push(i);
+            }
+    }
+return s;
+}      
+      
+function randCircles(namber){
+        let circlePars = [randCircle()];
+        let circlepar = {};
+        let i = 1;
+        while(i < namber)
+            {   
+            circlepar = randCircle();
+            if(!check(circlePars,circlepar)) continue;
+            circlePars.push(circlepar);
+            i += 1;  
+            }
+    return circlePars;
+}
+//nam=prompt('Введите число кругов: ',6);
+//if(nam>30){
+   // alert('Слишком много!!! Пусть будет 30');
+    //nam=30;
+//}
+      mass=randCircles(100);
+      velocity(mass);      
+function drawcirclers(mass){ 
+        for(let i of mass){
+        drawСircle(i.x, i.y, i.radius,i.color);   
+      }
+}
+      
+drawcirclers(mass);
+
+function drow(){
+        clear();
+    let i=0;
+         while(i < mass.length)
+        {
+            collision(mass,i);
+            if(mass[i].x+mass[i].speed.x<mass[i].radius)
+            {
+                mass[i].x=mass[i].radius+Math.abs((mass[i].x-mass[i].radius-(mass[i].speed.x)));
+                mass[i].speed.x=-mass[i].speed.x;
+            }
+            else if(mass[i].x+mass[i].speed.x+mass[i].radius>1000)
+                {
+                mass[i].x=1000-mass[i].radius-Math.abs((1000-mass[i].radius-mass[i].x-(mass[i].speed.x)));
+                mass[i].speed.x=-mass[i].speed.x;
+                }
+            else mass[i].x+=mass[i].speed.x
+            
+         if(mass[i].y+mass[i].speed.y<mass[i].radius)
+            {
+                mass[i].y=mass[i].radius+Math.abs((mass[i].y-mass[i].radius-(mass[i].speed.y)));
+                mass[i].speed.y=-mass[i].speed.y;
+            }
+            else if(mass[i].y+mass[i].speed.y+mass[i].radius>1000)
+                {
+                mass[i].y=1000-mass[i].radius-Math.abs((1000-mass[i].y-mass[i].radius-(mass[i].speed.y)));
+                mass[i].speed.y=-mass[i].speed.y;
+                }
+            else mass[i].y+=mass[i].speed.y; 
+            i+=1;
+        }
+        drawcirclers(mass);
+      }
+      
+    function velocity(mass){ 
+          for(let i in mass){
+            mass[i].speed={x:Math.round(20*Math.random()-10),y:Math.round(20*Math.random()-10)}  
+          }
+      } 
+      
+   let timerId = setInterval(drow, 20); 
+
+function collision(mass,i){
+    let s=check2(mass,mass[i],i);
+    if(!(s[0])){
+        let k, vc, votn;
+    for(let j=1;j<s.length;j++)
+        {
+        k=mass[i].radius**2/(mass[s[j]].radius**2);
+        votn={x: mass[i].speed.x - mass[s[j]].speed.x, y: mass[i].speed.y - mass[s[j]].speed.y};    
+        mass[i].speed.x=Math.round(mass[s[j]].speed.x + votn.x * (k-1)/(k+1));
+        mass[i].speed.y=Math.round(mass[s[j]].speed.y + votn.y * (k-1)/(k+1));
+        mass[s[j]].speed.x=Math.round(mass[s[j]].speed.x + 2*votn.x * k/(k+1));
+        mass[s[j]].speed.y=Math.round(mass[s[j]].speed.y + 2*votn.y * k/(k+1));    
+        }
+    }
+}
+  
+  </script>
+</html>
