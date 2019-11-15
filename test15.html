@@ -10,7 +10,6 @@
   <script>
   	const canvas = document.getElementById('canvas');
 	var ctx = canvas.getContext("2d");
-
 	const clear = () => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	};
@@ -22,9 +21,10 @@
 		ctx.fillStyle = color;
 		ctx.fill();
 	};
+
       
 function randCircle(){  
-    let  radius = Math.round(25 * Math.random() + 5);
+    let  radius = Math.round(25 * Math.random() + 10);
     let  x = Math.round((970-radius) * Math.random() + 30);
     let  y = Math.round((970-radius) * Math.random() + 30);
     let color = ['red','green','blue','pink','yellow','dimgray','darkorange','lime','crimson'];
@@ -80,7 +80,8 @@ function randCircles(namber){
    // alert('Слишком много!!! Пусть будет 30');
     //nam=30;
 //}
-      mass=randCircles(100);
+      let namb=10
+      mass=randCircles(namb);
       velocity(mass);      
 function drawcirclers(mass){ 
         for(let i of mass){
@@ -122,6 +123,9 @@ function drow(){
             i+=1;
         }
         drawcirclers(mass);
+        ctx.font = "20px serif";
+        ctx.fillStyle = "blue";
+        ctx.fillText(`Очки:${namb-i}`,920,50);
       }
       
     function velocity(mass){ 
@@ -133,7 +137,7 @@ function drow(){
    let timerId = setInterval(drow, 20); 
 
 function collision(mass,i){
-    let s=check2(mass,mass[i],i);
+    let s=check2(mass,mass[i]);
     if(!(s[0])){
         let k, vc, votn;
     for(let j=1;j<s.length;j++)
@@ -148,5 +152,31 @@ function collision(mass,i){
     }
 }
   
+      function getCursorPosition(canvas, event) {
+    const rect = canvas.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    console.log("x: " + x + " y: " + y) 
+    return {x: Math.round(x), y: Math.round(y)};
+}
+
+canvas.addEventListener('mousedown', function(e) {
+    m = getCursorPosition(canvas, e)
+//    alert(m.x);
+    let i=0;
+    a = randCircle();
+    a.x = m.x;
+    a.y = m.y;
+    velocity([a]);
+    if((s=check2(mass,a))[0]){
+    mass.push(a);
+    i+=1;
+    } 
+    else {
+        mass.splice(s[1],1);
+        i-=1;
+    }
+}
+)
   </script>
 </html>
